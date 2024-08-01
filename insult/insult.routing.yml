@@ -1,0 +1,7 @@
+insult.insult_page:
+  path: '/insult'
+  defaults:
+    _controller: '\Drupal\insult\Controller\InsultPageController::insultPage'
+    _title: 'Get your insults'
+  requirements:
+    _permission: 'access content'

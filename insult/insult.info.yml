@@ -1,0 +1,6 @@
+name: Insult Plugin
+description: Plugin for posting insults
+package: Custom
+
+core_version_requirement: ^9.4 || ^10
+type: module
