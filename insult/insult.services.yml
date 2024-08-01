@@ -1,3 +1,4 @@
 services:
-  insult.api_client:
+  insult.insult_api_client:
     class: Drupal\insult\API\InsultAPIClient
+    autowire: true
