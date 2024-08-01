@@ -20,36 +20,15 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 class InsultBlock extends BlockBase
 {
 
-  const CACHE_ID = 'insult_block:insult';
-
   /**
    * @inheritDoc
    */
   public function build(): array
   {
-    $insult = $this->getInsult();
-    return [
-      '#markup' => $insult,
-    ];
-  }
+    $build['#cache']['max-age'] = 60 * 15;
+    $build['#markup'] =  $this->getAPIInsult();
 
-  private function getCachedData(): ?string
-  {
-    $cache = Drupal::cache()->get(self::CACHE_ID);
-
-    if ($cache) {
-      return $cache->data;
-    }
-
-    return NULL;
-  }
-
-  private function saveInsultCache(string $insult): ?string
-  {
-    $cache_id = self::CACHE_ID;
-    Drupal::cache()->set($cache_id, $insult, time() + 900);
-
-    return $this->getCachedData();
+    return $build;
   }
 
   private function getAPIInsult(): string
@@ -60,15 +39,6 @@ class InsultBlock extends BlockBase
     $apiClient = Drupal::service('insult.api_client');
 
     return $apiClient->getInsult();
-  }
-
-  private function getInsult(): string
-  {
-    $data = $this->getCachedData();
-
-    return $data ?? $this->saveInsultCache(
-        $this->getAPIInsult()
-    );
   }
 
 }

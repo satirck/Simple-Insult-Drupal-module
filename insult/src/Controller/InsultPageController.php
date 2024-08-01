@@ -19,33 +19,13 @@ class InsultPageController extends ControllerBase
 
   public function insultPage(): array
   {
-    $insults = $this->getInsults();
+    $build['#cache']['max-age'] = 60 * 15;
+    $build['#markup'] = implode('<br>', $this->getAPIInsults());
 
-    return [
-      '#markup' => implode('<br>', $insults),
-    ];
+    return $build;
   }
 
-  private function getCachedData(): ?array
-  {
-    $cache = Drupal::cache()->get(self::CACHE_ID);
-
-    if ($cache) {
-      return $cache->data;
-    }
-
-    return NULL;
-  }
-
-  private function saveInsultsCache(array $insult): ?array
-  {
-    $cacheId = self::CACHE_ID;
-    Drupal::cache()->set($cacheId, $insult, time() + 900);
-
-    return $this->getCachedData();
-  }
-
-  private function getAPIInsults(): ?array
+  private function getAPIInsults(): array
   {
     /**
      * @var \Drupal\insult\API\InsultAPIClient $apiClient
@@ -58,15 +38,6 @@ class InsultPageController extends ControllerBase
     }
 
     return $insults;
-  }
-
-  private function getInsults(): array
-  {
-    $data = $this->getCachedData();
-
-    return $data ?? $this->saveInsultsCache(
-        $this->getAPIInsults()
-    );
   }
 
 }
