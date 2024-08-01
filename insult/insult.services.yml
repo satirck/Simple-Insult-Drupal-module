@@ -1,0 +1,3 @@
+services:
+  insult.api_client:
+    class: Drupal\insult\API\InsultAPIClient
