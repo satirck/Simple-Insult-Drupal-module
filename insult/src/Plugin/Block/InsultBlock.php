@@ -72,7 +72,7 @@ class InsultBlock extends BlockBase implements ContainerFactoryPluginInterface
    */
   public function build(): array
   {
-    $build['#cache']['max-age'] = 60 * 15;
+    $build['#cache']['max-age'] = 900;
     $build['#markup'] = $this->getAPIInsult();
 
     return $build;

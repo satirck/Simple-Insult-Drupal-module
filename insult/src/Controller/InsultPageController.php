@@ -40,10 +40,28 @@ class InsultPageController extends ControllerBase
 
   public function insultPage(): array
   {
-    $build['#cache']['max-age'] = 60 * 15;
-    $build['#markup'] = implode('<br>', $this->getAPIInsults());
+    return [
+      '#markup' => $this->getPageContent(),
+      '#cache' => [
+        'max-age' => 900,
+      ],
+    ];
+  }
 
-    return $build;
+  private function getPageContent(): string
+  {
+    $cache_id = 'insult_page_content';
+    $cache = \Drupal::cache()->get($cache_id);
+
+    if ($cache) {
+      $insults = $cache->data;
+    }
+    else {
+      $insults = $this->getAPIInsults();
+      \Drupal::cache()->set($cache_id, $insults, time() + 900);
+    }
+
+    return implode('<br>', $insults);
   }
 
   private function getAPIInsults(): array
