@@ -4,25 +4,33 @@ declare(strict_types=1);
 
 namespace Drupal\insult\API;
 
-use Drupal;
+use GuzzleHttp\Client;
 
 /**
- * Provides static method for getting insult from WEB API
+ * Provides method for getting insult from WEB API
  */
-class InsultAPIClient
-{
+class InsultAPIClient {
 
   const API_PATH = 'https://evilinsult.com/generate_insult.php?lang=en&type=json';
 
-  public static function getInsult(): string
-  {
-    $reqData = file_get_contents(self::API_PATH);
-    Drupal::logger('debug')->debug($reqData);
+  protected Client $httpClient;
 
-    $pattern = '/"insult":"(.*?)"/';
-    preg_match($pattern, $reqData, $matches);
+  /**
+   * @param \GuzzleHttp\Client $client
+   * Http Client for sending requests
+   */
+  public function __construct(Client $client) {
+    $this->httpClient = $client;
+  }
 
-    return $matches[1] ?? 'Almost done';
+  /**
+   * @throws \GuzzleHttp\Exception\GuzzleException
+   */
+  public function getInsult(): string {
+    $response = $this->httpClient->get(self::API_PATH);
+    $jsonData = json_decode($response->getBody()->getContents(), TRUE);
+    
+    return $jsonData['insult'] ?? 'None';
   }
 
 }
